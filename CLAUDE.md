@@ -3,7 +3,12 @@
 ## Le projet
 
 Dépôt central pour exploiter les données de l'ERP Negolux avec Claude Code, le MCP Negolux et, à terme, n8n.
-Premier cas d'usage : la prévision du CA annuel (`prevision/`, résultats dans `docs/`).
+
+- **Interface web** (Streamlit, `app.py`) : assistant question/réponse, explorateur MCP et journal.
+  - L'assistant (`assistant.py`) passe par le Claude Agent SDK, avec pour seuls outils ceux du serveur MCP. Il ne charge ni ce fichier ni `.claude/settings.json`.
+  - Modules annexes : `auth.py` (comptes), `fichiers.py` (pièces jointes), `exports.py` (PDF, Excel, CSV), `journal_excel.py` (journal).
+  - Le client MCP (`mcp_direct.py`) utilise `streamablehttp_client`, retiré de `mcp` 2.0 : garder `mcp<2` dans `requirements.txt` tant qu'il n'est pas adapté.
+- **Prévision du CA annuel** : `prevision/`, résultats dans `docs/`.
 
 ## Accès aux données : MCP Negolux (lecture seule)
 
@@ -47,7 +52,9 @@ Au changement d'année, faire glisser `ANNEES_STABLES` dans `prevision/commun.py
 
 ## Journal des échanges
 
-Chaque question posée à Claude Code dans ce dépôt, et chaque réponse, est enregistrée automatiquement dans `journal/echanges.xlsx`. Ce sont les hooks `UserPromptSubmit` et `Stop` de `.claude/settings.json` qui s'en chargent, via `.claude/hooks/journal_echanges.py`.
+Chaque question posée à Claude et sa réponse sont enregistrées automatiquement dans `journal/echanges.xlsx`, via `journal_excel.py` :
+- depuis l'interface, par `app.py` ;
+- depuis le terminal, par les hooks `UserPromptSubmit` et `Stop` de `.claude/settings.json` (`.claude/hooks/journal_echanges.py`).
 
 - `journal/` est local et ignoré par git, car il contient des données confidentielles.
 - La source de vérité est `journal/echanges.jsonl`. Le classeur est régénéré à partir de ce fichier après chaque réponse.
@@ -57,5 +64,5 @@ Chaque question posée à Claude Code dans ce dépôt, et chaque réponse, est e
 
 - Réponses et documents en français. Montants en € TTC sauf mention contraire.
 - Les chiffres viennent des outils, jamais de mémoire. Toujours indiquer l'outil et la période utilisés.
-- Les données sont confidentielles : le dépôt doit rester **privé**. Aucun identifiant ni clé API dans le dépôt : les mettre dans `.env`, ignoré par git.
-- Python 3.11 ou plus : `pip install -r requirements.txt`.
+- Les données sont confidentielles : le dépôt doit être **privé**. Aucun identifiant ni clé API dans le dépôt : les mettre dans `.env`, ignoré par git. `comptes.json` et `journal/` sont aussi ignorés.
+- Python 3.11 ou plus : `python -m pip install -r requirements.txt`.

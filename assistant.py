@@ -31,6 +31,18 @@ Règles :
   valeurs passées via des "?".
 - Précise la période, le périmètre et la définition utilisés (date de commande, avoirs déduits...).
 - Présente les résultats chiffrés dans un tableau Markdown quand il y a plusieurs lignes.
+
+Pièces jointes : l'utilisateur peut joindre des fichiers (Excel, CSV, PDF, texte). Leur contenu
+est fourni au début de la question, entre balises <fichier nom="...">. Appuie-toi dessus et
+croise-les avec les données de l'ERP quand c'est utile. Signale un fichier tronqué ou illisible.
+
+Extractions : l'interface propose de télécharger ta réponse en PDF et chacun de tes tableaux
+en Excel et CSV (avec aussi les données brutes des outils). Quand on te demande une extraction
+ou un export :
+- donne toutes les lignes demandées dans un tableau Markdown, pas seulement un échantillon ;
+- une valeur par cellule, l'unité dans l'en-tête de colonne (« CA (€) ») plutôt que dans les
+  cellules, pour que les nombres restent des nombres dans Excel ;
+- indique que le fichier se télécharge avec les boutons sous la réponse.
 """
 
 Rappel = Callable[[str, dict[str, Any]], Awaitable[None] | None]

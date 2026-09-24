@@ -222,3 +222,7 @@ sortie/
 
 # Journal local des échanges avec Claude Code (données confidentielles)
 journal/
+
+# Comptes de l'interface (mots de passe hachés)
+comptes.json
+comptes.tmp
