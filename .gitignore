@@ -219,3 +219,6 @@ __marimo__/
 
 # Sorties des scripts de prévision
 sortie/
+
+# Journal local des échanges avec Claude Code (données confidentielles)
+journal/

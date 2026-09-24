@@ -45,6 +45,14 @@ Les scripts ne lisent que `data/`. Pour rafraîchir les données (N = année en 
 
 Au changement d'année, faire glisser `ANNEES_STABLES` dans `prevision/commun.py`.
 
+## Journal des échanges
+
+Chaque question posée à Claude Code dans ce dépôt, et chaque réponse, est enregistrée automatiquement dans `journal/echanges.xlsx`. Ce sont les hooks `UserPromptSubmit` et `Stop` de `.claude/settings.json` qui s'en chargent, via `.claude/hooks/journal_echanges.py`.
+
+- `journal/` est local et ignoré par git, car il contient des données confidentielles.
+- La source de vérité est `journal/echanges.jsonl`. Le classeur est régénéré à partir de ce fichier après chaque réponse.
+- Pour retrouver une analyse déjà faite, on peut lire `journal/echanges.jsonl`.
+
 ## Conventions
 
 - Réponses et documents en français. Montants en € TTC sauf mention contraire.

@@ -12,6 +12,7 @@ Ce dépôt central regroupe les analyses des données de l'ERP Negolux faites av
 | `prevision/` | Scripts Python de prévision du CA |
 | `docs/` | Analyses et notes de méthode |
 | `CLAUDE.md` | Contexte chargé automatiquement par Claude Code : outils MCP, définitions, procédure de mise à jour des données |
+| `.claude/` | Configuration Claude Code du projet : hooks qui tiennent le journal des questions et réponses |
 
 ## Démarrage
 
@@ -23,6 +24,26 @@ python prevision/par_canal.py      # détail canal par canal
 ```
 
 Pour mettre à jour les données, ouvrir Claude Code dans ce dépôt, avec le MCP Negolux connecté, et demander : « mets à jour les données de prévision ». La procédure à suivre est décrite dans `CLAUDE.md`.
+
+## Journal des questions et réponses
+
+Chaque question posée à Claude Code dans ce dépôt, et chaque réponse, est ajoutée automatiquement à `journal/echanges.xlsx`, avec :
+- la date de la question et de la réponse, et la durée ;
+- l'utilisateur et la session ;
+- les outils utilisés (par exemple `mcp__Negolux__stats_commandes ×3`).
+
+**Ce qu'il faut :**
+- Python dans le PATH, avec `openpyxl` (`pip install -r requirements.txt`) ;
+- sous Windows, Git pour Windows (Git Bash), que Claude Code utilise pour lancer les hooks.
+
+**Bon à savoir :**
+- Le dossier `journal/` reste sur ton poste : il est ignoré par git, car il contient des données confidentielles.
+- Si le classeur est ouvert dans Excel au moment d'une réponse, l'échange est quand même conservé dans `journal/echanges.jsonl`. Le classeur est rattrapé à la réponse suivante, ou tout de suite avec :
+
+  ```bash
+  python .claude/hooks/journal_echanges.py --reconstruire
+  ```
+- En cas de souci, le détail est dans `journal/erreurs.log`. Le journal ne bloque jamais Claude Code.
 
 ## Prochaines étapes
 
