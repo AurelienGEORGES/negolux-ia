@@ -1,2 +1,3 @@
 # negolux-ia
-projet de branchement d'un MCP et de n8n
+Projet de connexion d'une base de données et de ses données via un MCP et n8n.
+Le projet vient d'être lancé.
