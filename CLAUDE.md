@@ -16,16 +16,31 @@ Dépôt central pour exploiter les données de l'ERP Negolux avec Claude Code, l
   - Une année par appel avec `par_mois: true`. Sur plusieurs années d'un coup, la requête dépasse le délai (`max_statement_time`).
   - Pour comparer à l'année précédente, un seul appel avec `comparer_avec` plutôt que deux appels.
   - `regroupement: regroupement_places` donne le détail par canal (Vente privée, Amazon…), `univers` sépare garden et home.
-- **`historique_produits`** : historique jour par jour par produit, fournisseur ou famille (logistique DENJEAN uniquement).
-- **`lister_tables`, `decrire_table`, `executer_requete_sql`** : pour tout le reste. Toujours mettre un `LIMIT`, car le résultat est tronqué au-delà de 200 lignes.
-- Pièges connus :
-  - la table `commande` contient environ 20 000 lignes avec `DATE_C = 0000-00-00`, à exclure en SQL libre ;
+- **`consulter_doc`** : la documentation métier. **À lire avant une question de définition ou avant du SQL libre.** Sujets :
+  - `kpis` : définitions et formules ;
+  - `regles_metier` : périmètres et pièges ;
+  - `glossaire` : vocabulaire et codes des places de marché ;
+  - `requetes_types` : requêtes SQL validées ;
+  - `qualite_donnees` : anomalies connues ;
+  - `schema` : tables et jointures.
+- **`compter_commandes`** : nombre de commandes, avec le même périmètre que `stats_commandes`, SAV inclus. Détail possible par statut, statut SAV, place, **jour** ou mois. C'est le seul outil qui donne un détail par jour.
+- **`historique_produits`** : historique jour par jour par produit, fournisseur, famille ou univers (stock, ruptures, prix).
+  - Il ne couvre que la logistique DENJEAN, et son CA exclut les remises et les avoirs : ne jamais s'en servir pour le CA de référence.
+  - Sur tout un univers, il dépasse le délai au-delà d'environ un mois : utiliser `granularite: periode` sur des périodes courtes.
+- **`rechercher_produit`, `composition_produit`** : trouver un produit (ID, SKU, stock, ventes à 30 jours) et sa nomenclature (composants et leur stock).
+- **`lister_tables`, `decrire_table`, `executer_requete_sql`** : pour tout le reste. Partir de `requetes_types`. Toujours mettre un `LIMIT`, car le résultat est tronqué au-delà de 200 lignes.
+- Pièges connus (voir `qualite_donnees`) :
+  - `commande.ETAT` est vide : le vrai statut est `ID_ETAT` (annulée = 10) ;
+  - les dates vides valent `0000-00-00`, pas NULL ;
+  - la date de commande de référence est `DATE_COMMANDE` ;
   - `produit_budget` est obsolète (dernières données en 2021).
 
 ## Définitions à respecter
 
 - **CA** = CA brut (quantité × prix + transport) − remises − avoirs, en **€ TTC**, à la **date de commande**.
-- La base est une copie de la veille : pas de données du jour.
+- **Date d'arrêt = la veille.** La base contient aussi des commandes du jour même, qui est donc incomplet, ainsi que quelques commandes datées dans le futur.
+- **Taux de marque** = marge / CA : c'est le `taux_marge_pct` de `stats_commandes`. Le **taux de marge** est la marge rapportée au coût d'achat. Ne pas confondre les deux.
+- Les commandes SAV (renvoi, avarie, retour) sont comptées dans le nombre de commandes.
 - **Les avoirs sont saisis avec plusieurs semaines de retard.** Sur les 2-3 derniers mois, le CA est donc surestimé. `prevision/commun.py` corrige cet effet. Ne jamais comparer un mois récent brut à un mois ancien sans cette correction.
 - **Saisonnalité forte** : avril-août font environ 61 % du CA annuel, juillet seul environ 17 %. L'univers garden pèse environ deux tiers du CA.
 - Les années 2020 à 2022 sont déformées par le Covid : ne pas s'en servir pour la saisonnalité ni pour les tendances.
